@@ -11,13 +11,13 @@ import com.daddyno1.butterapi.Butter;
 
 public class SecondActivity extends AppCompatActivity {
 
-    @BindView(R.id.tx)
+    @BindView(R2.id.tx)
     TextView tx;
 
-    @BindView(R.id.tx2)
+    @BindView(R2.id.tx2)
     TextView tx2;
 
-    @BindString(R.string.hello)
+    @BindString(R2.string.hello)
     String tips;
 
     @Override
@@ -25,5 +25,8 @@ public class SecondActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second);
         Butter.bind(this);
+
+        tx.setText(tips);
+        tx2.setText(tips);
     }
 }

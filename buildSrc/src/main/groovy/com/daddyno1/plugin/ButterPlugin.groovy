@@ -71,36 +71,36 @@ class ButterPlugin implements Plugin<Project>{
                      * 第一种方式： 把 复制 R文件的逻辑插入构建流程 processResources 之后会生成，插入这个任务之后，
                      * 这种方式不用定义任务。
                      */
-//                    def rFile = project.files(textSymbolOutputFile)
-//                    //创建生成
-//                    def task = project.tasks.create("Generate${variant.name.capitalize()}R2", GenerateR2Task.class)
-//                    task.outputDir = new File(outputDir)
-//                    task.pkg = pkg
-//                    task.rFile = rFile
-//                    processResourcesTask.doLast{
-//                        task.doAction()
-//                    }
-
-                    /**
-                     *  第二种方式：把我们定义的任务挂载到 构建任务中去。
-                     *  ????????????? 但是这里有个问题，GenerateR2Task的执行不会跟  processResourcesTask 建立联系，
-                     *  所以获取到的 rFile 是不存在的。待研究。
-                     */
-                    //获取根据  processResourcesTask 生成的 textSymbolOutputFile
-                    def rFile = project.files(textSymbolOutputFile).builtBy(processResourcesTask)
-
+                    def rFile = project.files(textSymbolOutputFile)
                     //创建生成
                     def task = project.tasks.create("Generate${variant.name.capitalize()}R2", GenerateR2Task.class)
                     task.outputDir = new File(outputDir)
                     task.pkg = pkg
                     task.rFile = rFile
+                    processResourcesTask.doLast{
+                        task.doAction()
+                    }
 
                     /**
-                     * 把新创建的任务挂载到 Gradle 构建任务中：
-                     * 给variant 添加一个生成 Java 代码的任务。This will make the generate[Variant]Sources task depend on this task and add the
-                     *  new source folders as compilation inputs.
+                     *  第二种方式：把我们定义的任务挂载到 构建任务中去。
+                     *  ????????????? 但是这里有个问题，GenerateR2Task的执行不会跟  processResourcesTask 建立联系，
+                     *  所以获取到的 rFile 是不存在的。待研究。。。。。。。。。。。
                      */
-                    variant.registerJavaGeneratingTask(task, task.outputDir)
+                    //获取根据  processResourcesTask 生成的 textSymbolOutputFile
+//                    def rFile = project.files(textSymbolOutputFile).builtBy(processResourcesTask)
+//
+//                    //创建生成
+//                    def task = project.tasks.create("Generate${variant.name.capitalize()}R2", GenerateR2Task.class)
+//                    task.outputDir = new File(outputDir)
+//                    task.pkg = pkg
+//                    task.rFile = rFile
+//
+//                    /**
+//                     * 把新创建的任务挂载到 Gradle 构建任务中：
+//                     * 给variant 添加一个生成 Java 代码的任务。This will make the generate[Variant]Sources task depend on this task and add the
+//                     *  new source folders as compilation inputs.
+//                     */
+//                    variant.registerJavaGeneratingTask(task, task.outputDir)
                 }
             }
         }
