@@ -1,0 +1,15 @@
+apply plugin: 'groovy'
+
+dependencies {
+    implementation localGroovy()
+    implementation gradleApi()
+
+    //访问 google 给安卓写的那些插件
+    implementation 'com.android.tools.build:gradle:3.6.3'
+    implementation 'com.squareup:javapoet:1.13.0'
+}
+
+repositories {
+    google()
+    jcenter()
+}

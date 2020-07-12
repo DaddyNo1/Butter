@@ -1,0 +1,38 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    
+    repositories {
+        google()
+        jcenter()
+        
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.6.3'
+        
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+        
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+
+//定义 rootProject 的扩展。 Gradle 允许在Project对象上添加额外属性，也就是说任何
+// build.gradle 都可以定义额外的属性，使用ext来定义额外属性。 最外层的 project 叫
+// rootProject (这里的描述有误，应该是所有的 子project 都可以通过 getRootProject()方法获取到
+// root Project，groovy中直接可用 .rootProject 代替 方法调用)
+ext{
+    compileSdkVersion = 29
+    buildToolsVersion = "29.0.3"
+}
