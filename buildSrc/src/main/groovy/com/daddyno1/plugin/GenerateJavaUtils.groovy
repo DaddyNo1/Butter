@@ -72,6 +72,7 @@ class GenerateJavaUtils {
                 .addTypes(types)
                 .build()
 
+        println "${pkg} - ${output.path}"
         JavaFile r2File = JavaFile.builder(pkg, R2).build()
         r2File.writeTo(output)
     }

@@ -43,5 +43,3 @@ dependencies {
     implementation project(path: ':butter')
     implementation project(path: ':test')
 }
-
-files()

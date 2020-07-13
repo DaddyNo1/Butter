@@ -1,0 +1,179 @@
+记一次完整的 编译 日志
+
+Executing tasks: [:app:assembleDebug] in project /Users/jxf/workspace/Android/githubProject/Butter
+
+> Task :buildSrc:compileJava NO-SOURCE
+> Task :buildSrc:compileGroovy
+> Task :buildSrc:processResources
+> Task :buildSrc:classes
+> Task :buildSrc:jar
+> Task :buildSrc:assemble
+> Task :buildSrc:compileTestJava NO-SOURCE
+> Task :buildSrc:compileTestGroovy NO-SOURCE
+> Task :buildSrc:processTestResources NO-SOURCE
+> Task :buildSrc:testClasses UP-TO-DATE
+> Task :buildSrc:test NO-SOURCE
+> Task :buildSrc:check UP-TO-DATE
+> Task :buildSrc:build
+Configuration on demand is an incubating feature.
+
+> Configure project :app
+app: ButterPlugin - start
+
+> Configure project :test
+test: ButterPlugin - start
+
+> Task :butter-compiler:processResources NO-SOURCE
+> Task :butter-annotation:compileJava
+> Task :butter-annotation:processResources NO-SOURCE
+> Task :butter-annotation:classes
+> Task :butter-annotation:jar
+> Task :app:preBuild UP-TO-DATE
+> Task :app:preDebugBuild UP-TO-DATE
+> Task :butter:preBuild UP-TO-DATE
+> Task :butter:preDebugBuild UP-TO-DATE
+> Task :butter:packageDebugRenderscript NO-SOURCE
+> Task :test:preBuild UP-TO-DATE
+> Task :test:preDebugBuild UP-TO-DATE
+> Task :test:packageDebugRenderscript NO-SOURCE
+> Task :butter:compileDebugRenderscript NO-SOURCE
+> Task :butter:generateDebugResValues
+> Task :butter:generateDebugResources
+> Task :app:mainApkListPersistenceDebug
+> Task :app:compileDebugRenderscript NO-SOURCE
+> Task :app:generateDebugResValues
+> Task :app:generateDebugResources
+> Task :test:compileDebugRenderscript NO-SOURCE
+> Task :test:generateDebugResValues
+> Task :test:generateDebugResources
+> Task :app:createDebugCompatibleScreenManifests
+> Task :app:extractDeepLinksDebug
+> Task :app:generateDebugBuildConfig
+> Task :butter:packageDebugResources
+> Task :butter:extractDeepLinksDebug
+> Task :test:packageDebugResources
+> Task :test:extractDeepLinksDebug
+> Task :test:processDebugManifest
+> Task :butter:processDebugManifest
+> Task :butter:compileDebugLibraryResources
+> Task :test:compileDebugLibraryResources
+> Task :butter:parseDebugLocalResources
+> Task :test:parseDebugLocalResources
+> Task :test:generateDebugBuildConfig
+> Task :test:mergeDebugShaders
+> Task :test:compileDebugShaders
+> Task :test:generateDebugAssets
+> Task :test:packageDebugAssets
+> Task :butter-compiler:compileJava
+> Task :butter-compiler:classes
+> Task :test:processDebugJavaRes NO-SOURCE
+> Task :butter-compiler:jar
+> Task :butter:compileDebugAidl NO-SOURCE
+> Task :test:compileDebugAidl NO-SOURCE
+> Task :butter:generateDebugBuildConfig
+> Task :butter:javaPreCompileDebug
+> Task :butter:mergeDebugShaders
+> Task :butter:compileDebugShaders
+> Task :butter:generateDebugAssets
+> Task :butter:packageDebugAssets
+> Task :butter:processDebugJavaRes NO-SOURCE
+> Task :test:mergeDebugJniLibFolders
+> Task :butter:bundleLibResDebug
+> Task :butter:mergeDebugJniLibFolders
+> Task :butter:mergeDebugNativeLibs
+> Task :test:mergeDebugNativeLibs
+> Task :butter:stripDebugDebugSymbols
+> Task :test:stripDebugDebugSymbols
+> Task :test:copyDebugJniLibsProjectOnly
+> Task :butter:copyDebugJniLibsProjectOnly
+> Task :butter:generateDebugRFile
+> Task :test:generateDebugRFile
+> Task :butter:compileDebugJavaWithJavac
+> Task :butter:bundleLibRuntimeDebug
+> Task :butter:bundleLibCompileDebug
+
+> Task :test:GenerateDebugR2
+GenerateR2Task - doAction
+========file /Users/jxf/workspace/Android/githubProject/Butter/test/build/intermediates/compile_symbol_list/debug/R.txt exists========
+
+> Task :test:javaPreCompileDebug
+
+> Task :test:compileDebugJavaWithJavac
+Gradle may disable incremental compilation as the following annotation processors are not incremental: jetified-butter-compiler.jar (project :butter-compiler).
+Consider setting the experimental feature flag android.enableSeparateAnnotationProcessing=true in the gradle.properties file to run annotation processing in a separate task and make compilation incremental.
+注: ButterProcessor - process - start
+注: com.daddyno1.test
+注: LoginActivity
+注: android.widget.TextView   testTv
+注: 872
+注: ButterProcessor - process - start
+
+> Task :test:bundleLibCompileDebug
+> Task :test:bundleLibRuntimeDebug
+> Task :test:bundleLibResDebug
+> Task :app:processDebugManifest
+> Task :app:compileDebugAidl NO-SOURCE
+> Task :app:mergeDebugShaders
+> Task :app:compileDebugShaders
+> Task :app:generateDebugAssets
+> Task :app:mergeDebugAssets
+> Task :app:processDebugJavaRes NO-SOURCE
+> Task :app:mergeDebugResources
+> Task :app:processDebugResources
+
+> Task :app:GenerateDebugR2
+GenerateR2Task - doAction
+========file /Users/jxf/workspace/Android/githubProject/Butter/app/build/intermediates/runtime_symbol_list/debug/R.txt exists========
+
+> Task :app:checkDebugDuplicateClasses
+> Task :app:javaPreCompileDebug
+
+> Task :app:compileDebugJavaWithJavac
+Gradle may disable incremental compilation as the following annotation processors are not incremental: jetified-butter-compiler.jar (project :butter-compiler).
+Consider setting the experimental feature flag android.enableSeparateAnnotationProcessing=true in the gradle.properties file to run annotation processing in a separate task and make compilation incremental.
+注: ButterProcessor - process - start
+注: com.daddyno1.butter
+注: MainActivity
+注: android.widget.TextView   tvTxt
+注: 922
+注: com.daddyno1.butter
+注: MainActivity
+注: android.widget.TextView   tvTxt2
+注: 923
+注: com.daddyno1.butter
+注: SecondActivity
+注: android.widget.TextView   tx
+注: 920
+注: com.daddyno1.butter
+注: SecondActivity
+注: android.widget.TextView   tx2
+注: 921
+注: com.daddyno1.butter
+注: MainActivity
+注: click
+注: [I@344d292b
+注: com.daddyno1.butter
+注: MainActivity
+注: appName
+注: com.daddyno1.butter
+注: SecondActivity
+注: tips
+注: ButterProcessor - process - start
+注: /Users/jxf/workspace/Android/githubProject/Butter/app/src/main/java/com/daddyno1/butter/ListActivity.java使用了未经检查或不安全的操作。
+注: 有关详细信息, 请使用 -Xlint:unchecked 重新编译。
+
+> Task :app:compileDebugSources
+> Task :app:dexBuilderDebug
+> Task :app:desugarDebugFileDependencies
+> Task :app:mergeDebugJavaResource
+> Task :app:mergeDebugJniLibFolders
+> Task :app:validateSigningDebug
+> Task :app:mergeDebugNativeLibs
+> Task :app:stripDebugDebugSymbols
+> Task :app:mergeExtDexDebug
+> Task :app:mergeDexDebug
+> Task :app:packageDebug
+> Task :app:assembleDebug
+
+BUILD SUCCESSFUL in 12s
+70 actionable tasks: 70 executed

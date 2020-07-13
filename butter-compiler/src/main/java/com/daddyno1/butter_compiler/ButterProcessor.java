@@ -92,6 +92,9 @@ public class ButterProcessor extends BaseProcessor {
             // 所属类的的包名
             String packageName = packageEle.getQualifiedName().toString();
 
+            logger(packageEle);
+            logger(clsSimpleName);
+
             // 属性的名称
             String attr = element.getSimpleName().toString();
             // 属性类型

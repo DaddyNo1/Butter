@@ -15,6 +15,11 @@ class GenerateR2Task extends DefaultTask{
         description = "这是一个生成R2 的task"
     }
 
+    def setInputAndOutput(){
+        this.inputs.files(rFile)
+        this.outputs.file(outputDir)
+    }
+
     /**
      * 有@TaskAction 修饰的会执行于 Task 执行阶段。
      */

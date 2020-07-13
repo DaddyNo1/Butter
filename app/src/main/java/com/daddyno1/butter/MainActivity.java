@@ -27,9 +27,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Butter.bind(this);
 
+
         tvTxt.setText(appName);
         tvTxt2.setText(appName);
-
     }
 
     @OnClick(R2.id.btn)
