@@ -3,32 +3,38 @@ package com.daddyno1.butter_compiler;
 import com.daddyno1.butter_annotation.BindString;
 import com.daddyno1.butter_annotation.BindView;
 import com.daddyno1.butter_annotation.OnClick;
+import com.daddyno1.butter_compiler.model.Bean;
+import com.daddyno1.butter_compiler.model.BindStringBean;
+import com.daddyno1.butter_compiler.model.BindViewBean;
+import com.daddyno1.butter_compiler.model.OnClickBean;
 import com.google.auto.service.AutoService;
-import com.squareup.javapoet.WildcardTypeName;
+import com.sun.tools.javah.Gen;
 
 import org.apache.commons.collections4.CollectionUtils;
+
 import java.lang.annotation.Annotation;
-import java.lang.reflect.WildcardType;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
-import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
-import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.type.TypeMirror;
 import javax.tools.Diagnostic;
 
 @AutoService(Processor.class)
 public class ButterProcessor extends BaseProcessor {
 
+    Map<String, List<Bean>> maps = new HashMap<>();
     TypeElement t_Activity;
+    TypeElement t_VIEW;
 
     @Override
     public SourceVersion getSupportedSourceVersion() {
@@ -45,7 +51,7 @@ public class ButterProcessor extends BaseProcessor {
         return types;
     }
 
-    private Set<Class<? extends Annotation>> getSupportedAnnotations(){
+    private Set<Class<? extends Annotation>> getSupportedAnnotations() {
         Set<Class<? extends Annotation>> annotations = new HashSet<>();
         annotations.add(BindView.class);
         annotations.add(OnClick.class);
@@ -62,28 +68,35 @@ public class ButterProcessor extends BaseProcessor {
 
         //android.app.Activity
         t_Activity = elementUtils.getTypeElement(Consts.ACTIVITY);
+        t_VIEW = elementUtils.getTypeElement(Consts.VIEW);
     }
 
     @Override
     public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
         messager.printMessage(Diagnostic.Kind.NOTE, "ButterProcessor - process - start");
 
-        if (!CollectionUtils.isEmpty(set)){
-            handleBindView(roundEnvironment.getElementsAnnotatedWith(BindView.class));
-            handleOnClick(roundEnvironment.getElementsAnnotatedWith(OnClick.class));
-            handleBindString(roundEnvironment.getElementsAnnotatedWith(BindString.class));
+
+
+        if (!CollectionUtils.isEmpty(set)) {
+            handleElement(roundEnvironment.getElementsAnnotatedWith(BindView.class), BindView.class);
+            handleElement(roundEnvironment.getElementsAnnotatedWith(OnClick.class), OnClick.class);
+            handleElement(roundEnvironment.getElementsAnnotatedWith(BindString.class), BindString.class);
+
+            new Generator(maps).generate();
+
+            return true;
         }
 
         return false;
     }
 
-    private void handleBindView(Set<? extends Element> elements){
+    private void handleElement(Set<? extends Element> elements, Class<? extends Annotation> cls) {
         for (Element element : elements) {
 
-            Checker.checkBindViewElement(element);
+            Checker.checkElement(element);
 
             Element parent = element.getEnclosingElement();
-            if(!typeUtils.isSubtype(parent.asType(), t_Activity.asType())){
+            if (!typeUtils.isSubtype(parent.asType(), t_Activity.asType())) {
                 throw new RuntimeException("@BindView 只能用于Activity");
             }
             // 所属类的名字
@@ -95,75 +108,67 @@ public class ButterProcessor extends BaseProcessor {
             logger(packageEle);
             logger(clsSimpleName);
 
-            // 属性的名称
-            String attr = element.getSimpleName().toString();
-            // 属性类型
-            String attrType = element.asType().toString();
-
-            logger(attrType + "   " + attr);
-            // BindView 注解
-            BindView bindView = element.getAnnotation(BindView.class);
-            // 控件的id
-            int id = bindView.value();
-            logger(id);
-        }
-    }
-
-    private void handleOnClick(Set<? extends Element> elements){
-        for (Element element : elements) {
-
-            Checker.checkOnClickElement(element);
-
-            Element parent = element.getEnclosingElement();
-            if(!typeUtils.isSubtype(parent.asType(),t_Activity.asType())){
-                throw new RuntimeException("@OnClick 只能用于Activity");
+            Bean bean;
+            if (cls == BindView.class) {
+                bean = handleBindView(element, packageName, clsSimpleName);
+            } else if (cls == OnClick.class) {
+                bean = handleOnClick(element, packageName, clsSimpleName);
+            } else if (cls == BindString.class) {
+                bean = handleBindString(element, packageName, clsSimpleName);
+            } else {
+                continue;
             }
 
-            // 所属类的名字
-            String clsSimpleName = parent.getSimpleName().toString();
-            PackageElement packageEle = elementUtils.getPackageOf(parent);
-            // 所属类的的包名
-            String packageName = packageEle.getQualifiedName().toString();
-
-            logger(packageEle);
-            logger(clsSimpleName);
-
-            // 方法需要符合一定的规范，例如最多只能有一个参数 View v
-
-            //被注解的方法名称
-            String methodName = element.getSimpleName().toString();
-            logger(methodName);
-
-            OnClick onClick = element.getAnnotation(OnClick.class);
-            int[] ids = onClick.value();
-            logger(ids);
-        }
-    }
-
-    private void handleBindString(Set<? extends Element> elements){
-        for (Element element : elements) {
-
-            Checker.checkBindStringElement(element);
-
-            Element parent = element.getEnclosingElement();
-            if(!typeUtils.isSubtype(parent.asType(),t_Activity.asType())){
-                throw new RuntimeException("@BindString 只能用于Activity");
+            String mapKey = packageEle + Consts.DOT + clsSimpleName;
+            List<Bean> beans = maps.get(mapKey);
+            if (beans == null) {
+                beans = new ArrayList<>();
+                maps.put(mapKey, beans);
             }
-
-            // 所属类的名字
-            String clsSimpleName = parent.getSimpleName().toString();
-            PackageElement packageEle = elementUtils.getPackageOf(parent);
-            // 所属类的的包名
-            String packageName = packageEle.getQualifiedName().toString();
-
-            logger(packageEle);
-            logger(clsSimpleName);
-
-            String attr = element.getSimpleName().toString();
-            logger(attr);
-
+            beans.add(bean);
         }
     }
 
+    private BindViewBean handleBindView(Element element, String pkg, String clsName) {
+
+        if(!typeUtils.isSubtype(element.asType(), t_VIEW.asType())){
+            throw new RuntimeException("@BindView 只能用于View");
+        }
+
+        // 属性的名称
+        String attr = element.getSimpleName().toString();
+        logger(attr);
+
+        // BindView 注解
+        BindView bindView = element.getAnnotation(BindView.class);
+        // 控件的id
+        int id = bindView.value();
+
+        BindViewBean bindViewBean = new BindViewBean(pkg, clsName, attr, id);
+        return bindViewBean;
+    }
+
+    private OnClickBean handleOnClick(Element element, String pkg, String clsName) {
+        //被注解的方法名称
+        String methodName = element.getSimpleName().toString();
+        logger(methodName);
+
+        OnClick onClick = element.getAnnotation(OnClick.class);
+        int[] ids = onClick.value();
+
+        OnClickBean onClickBean = new OnClickBean(pkg, clsName, methodName, ids);
+        return onClickBean;
+    }
+
+    private BindStringBean handleBindString(Element element, String pkg, String clsName) {
+        String attr = element.getSimpleName().toString();
+        logger(attr);
+
+        BindString bindString = element.getAnnotation(BindString.class);
+        int id = bindString.value();
+
+        BindStringBean bindStringBean = new BindStringBean(pkg, clsName, attr, id);
+        return bindStringBean;
+    }
 
 }

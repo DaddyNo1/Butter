@@ -17,6 +17,14 @@ class GenerateR2Task extends DefaultTask{
 
     def setInputAndOutput(){
         this.inputs.files(rFile)
+        /**
+         * 现在又有一个问题：为什么clean完项目后，只有第一次可以build通过，下一次执行build 的时候回报错？
+         *
+         *    报错信息：
+         *    A problem was found with the configuration of task ':test:GenerateDebugR2'.
+         *      > Cannot write to file '/Users/jxf/workspace/Android/githubProject/Butter/test/build/generated/source/r2/debug' specified for property '$1' as it is a directory.
+         *
+         */
         this.outputs.file(outputDir)
     }
 

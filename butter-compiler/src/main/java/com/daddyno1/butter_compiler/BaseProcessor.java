@@ -11,10 +11,10 @@ import javax.tools.Diagnostic;
 
 public abstract class BaseProcessor extends AbstractProcessor {
 
-    Filer filer;
-    Elements elementUtils;
-    Messager messager;
-    Types typeUtils;
+    static public Filer filer;
+    static public Elements elementUtils;
+    static public Messager messager;
+    static public Types typeUtils;
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnvironment) {

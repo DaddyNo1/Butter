@@ -24,6 +24,12 @@ public class Checker {
         }
     }
 
+    public static void checkElement(Element element){
+        if(checkIsPrivate(element)){
+            throw new RuntimeException(Utils.detailElement(element) + " 不能是私有的");
+        }
+    }
+
     private static boolean checkIsPrivate(Element element){
         Set<Modifier> modifiers = element.getModifiers();
         for (Modifier modifier : modifiers) {
