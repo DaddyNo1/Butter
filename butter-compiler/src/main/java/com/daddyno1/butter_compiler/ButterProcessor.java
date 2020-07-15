@@ -8,7 +8,8 @@ import com.daddyno1.butter_compiler.model.BindStringBean;
 import com.daddyno1.butter_compiler.model.BindViewBean;
 import com.daddyno1.butter_compiler.model.OnClickBean;
 import com.google.auto.service.AutoService;
-import com.sun.tools.javah.Gen;
+import com.sun.source.util.Trees;
+import com.sun.tools.javac.tree.JCTree;
 
 import org.apache.commons.collections4.CollectionUtils;
 
@@ -32,9 +33,14 @@ import javax.tools.Diagnostic;
 @AutoService(Processor.class)
 public class ButterProcessor extends BaseProcessor {
 
+    private static final String R2 = "R2";
+
     Map<String, List<Bean>> maps = new HashMap<>();
     TypeElement t_Activity;
     TypeElement t_VIEW;
+
+    //AST
+    Trees trees;
 
     @Override
     public SourceVersion getSupportedSourceVersion() {
@@ -64,6 +70,8 @@ public class ButterProcessor extends BaseProcessor {
     public synchronized void init(ProcessingEnvironment processingEnvironment) {
         super.init(processingEnvironment);
 
+        //初始化 AST
+        trees = Trees.instance(processingEnvironment);
         Utils.init(elementUtils);
 
         //android.app.Activity
@@ -75,14 +83,12 @@ public class ButterProcessor extends BaseProcessor {
     public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
         messager.printMessage(Diagnostic.Kind.NOTE, "ButterProcessor - process - start");
 
-
-
         if (!CollectionUtils.isEmpty(set)) {
             handleElement(roundEnvironment.getElementsAnnotatedWith(BindView.class), BindView.class);
             handleElement(roundEnvironment.getElementsAnnotatedWith(OnClick.class), OnClick.class);
             handleElement(roundEnvironment.getElementsAnnotatedWith(BindString.class), BindString.class);
 
-            new Generator(maps).generate();
+            new Generator(maps).generate(handleR2(roundEnvironment));
 
             return true;
         }
@@ -169,6 +175,30 @@ public class ButterProcessor extends BaseProcessor {
 
         BindStringBean bindStringBean = new BindStringBean(pkg, clsName, attr, id);
         return bindStringBean;
+    }
+
+    /**
+     * 处理 遍历 R2 文件。
+     */
+    private Map<Integer, String> handleR2(RoundEnvironment roundEnvironment) {
+        // Visitor
+        RScanner rScanner = new RScanner();
+
+        if (!roundEnvironment.processingOver() && trees != null) {
+            Set<Element> elements = (Set<Element>) roundEnvironment.getRootElements();
+            for (Element element : elements) {
+                // 如果是 R2 文件
+                if(R2.equals(element.getSimpleName().toString())){
+                    messager.printMessage(Diagnostic.Kind.NOTE, " >>>> element " + element.getSimpleName());
+
+                    JCTree tree = (JCTree) trees.getTree(element);
+                    tree.accept(rScanner);
+                }
+            }
+        }
+
+        // 通过遍历 R2 文件，生成一份缓存文件，key-> R2的常量值。  value:R.attr.actionBarPopupTheme
+        return rScanner.getR2Cache();
     }
 
 }

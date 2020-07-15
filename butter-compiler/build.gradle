@@ -16,6 +16,7 @@ dependencies {
     implementation 'org.apache.commons:commons-collections4:4.1'
 
     implementation project(path: ':butter-annotation')
+    implementation files('/Library/Java/JavaVirtualMachines/jdk1.8.0_191.jdk/Contents/Home/lib/tools.jar')
 }
 
 sourceCompatibility = "8"
