@@ -2,12 +2,16 @@ package com.daddyno1.plugin
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 
 class GenerateR2Task extends DefaultTask{
 
-    File outputDir
+    @OutputFile
+    File outputFile
     String pkg
+    @Input
     ConfigurableFileCollection rFile
 
 
@@ -15,6 +19,11 @@ class GenerateR2Task extends DefaultTask{
         description = "这是一个生成R2 的task"
     }
 
+    /**
+     * 可以使用  @OutputFile @Input 指定输入输出。 但是报错信息依然存在。
+     * @return
+     */
+    @Deprecated
     def setInputAndOutput(){
         this.inputs.files(rFile)
         /**
@@ -25,7 +34,7 @@ class GenerateR2Task extends DefaultTask{
          *      > Cannot write to file '/Users/jxf/workspace/Android/githubProject/Butter/test/build/generated/source/r2/debug' specified for property '$1' as it is a directory.
          *
          */
-        this.outputs.file(outputDir)
+        this.outputs.file(outputFile)
     }
 
     /**
@@ -44,9 +53,10 @@ class GenerateR2Task extends DefaultTask{
             lines.each { // 遍历每一行内容
                 utils.addItem(it)
             }
-            utils.generate(pkg, outputDir)
+            utils.generate(pkg, outputFile)
         }else{
             println "========file ${file.path} don't exists========"
         }
+
     }
 }

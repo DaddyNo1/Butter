@@ -13,6 +13,7 @@ import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.TypeSpec;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -38,6 +39,9 @@ public class Generator {
 
         TypeElement t_Activity = ButterProcessor.elementUtils.getTypeElement(Consts.ACTIVITY);
         TypeElement t_ViewBinding = ButterProcessor.elementUtils.getTypeElement(Consts.VIEW_BINDING);
+        TypeElement t_Resources = ButterProcessor.elementUtils.getTypeElement(Consts.RESOURCES);
+        TypeElement t_View = ButterProcessor.elementUtils.getTypeElement(Consts.VIEW);
+        TypeElement t_OnClickListener = ButterProcessor.elementUtils.getTypeElement(Consts.ON_CLICK_LISTENER);
 
         for (Map.Entry<String, List<Bean>> entry : maps.entrySet()) {
             String classFullName = entry.getKey();
@@ -54,13 +58,13 @@ public class Generator {
                     .addModifiers(Modifier.PUBLIC)
                     .addAnnotation(Override.class)
                     .addParameter(bindParameterSpec)
-                    .beginControlFlow("if(obj != null)")
-//                    .addStatement("if(obj != null){")
+                    .beginControlFlow("if(obj != null)")  // 不需要大括号
                     .addStatement("$T activity = ($T) obj", clsType, clsType);
 
             List<Bean> list= entry.getValue();
             String pkg = null;
             String clsName = null;
+            boolean isFirstBindString = true;   //第一次出现 BindString 会增加 Resources resources = activity.getResources();
             for (Bean bean : list) {
                 pkg = bean.pkgName;
                 clsName = bean.clsName;
@@ -69,12 +73,24 @@ public class Generator {
                     // id 和 R2 文件中的数据如何 映射？
                     methodBuilder.addStatement("activity.$L = activity.findViewById($L)", ((BindViewBean) bean).attrName, ids.get(((BindViewBean) bean).id));
                 }else if(bean instanceof OnClickBean){
-
+                    int[] mIds = ((OnClickBean) bean).id;
+                    //遍历ids
+                    for (int i = 0; i < mIds.length; i++) {
+                        int id = mIds[i];
+                        methodBuilder.beginControlFlow("activity.findViewById($L).setOnClickListener(new $T()", ids.get(id), t_OnClickListener);
+                        methodBuilder.beginControlFlow("@Override public void onClick($T v)", t_View);
+                        methodBuilder.addStatement("activity.$L(v)",((OnClickBean) bean).funName);
+                        methodBuilder.endControlFlow();
+                        methodBuilder.endControlFlow(")");
+                    }
                 }else if(bean instanceof BindStringBean){
-
+                    if (isFirstBindString){
+                        isFirstBindString = false;
+                        methodBuilder.addStatement("$T resources = activity.getResources()", t_Resources);
+                    }
+                    methodBuilder.addStatement("activity.$L = resources.getString($L)",((BindStringBean) bean).attrName, ids.get(((BindStringBean) bean).id));
                 }
             }
-//            methodBuilder.addStatement("}");
             methodBuilder.endControlFlow();
 
             TypeSpec typeSpec = TypeSpec.classBuilder(clsName + Consts.CLASS_SUFFIX)

@@ -52,6 +52,7 @@ class ButterPlugin implements Plugin<Project>{
         variants.all {BaseVariant variant ->
             //定义R2输出路径。注意生成的R2文件如何可以在build过程中被引入，这是个问题。
             def outputDir = project.getBuildDir().path + "/generated/source/r2/${variant.dirName}"
+            def outputFile = new File(outputDir);
 
             def pkg = getPackage(variant);
             def once = new AtomicBoolean()
@@ -88,7 +89,7 @@ class ButterPlugin implements Plugin<Project>{
 //                    def rFile = project.files(textSymbolOutputFile)
 //                    //创建生成
 //                    def task = project.tasks.create("Generate${variant.name.capitalize()}R2", GenerateR2Task.class)
-//                    task.outputDir = new File(outputDir)
+//                    task.outputFile = outputFile
 //                    task.pkg = pkg
 //                    task.rFile = rFile
 //                    processResourcesTask.doLast{
@@ -112,10 +113,14 @@ class ButterPlugin implements Plugin<Project>{
 
                     //创建生成
                     def task = project.tasks.create("Generate${variant.name.capitalize()}R2", GenerateR2Task.class){GenerateR2Task task ->
-                        task.outputDir = new File(outputDir)
+                        task.outputFile = outputFile
                         task.pkg = pkg
                         task.rFile = rFile
-                        task.setInputAndOutput()        //让 GenerateR2Task 和 processResources 建立联系
+
+                        /**
+                         * 使用注解指定输入 输出。代码简洁。
+                         */
+//                        task.setInputAndOutput()        //让 GenerateR2Task 和 processResources 建立联系
                     }
 
                     /**
@@ -126,7 +131,7 @@ class ButterPlugin implements Plugin<Project>{
                      *  本质是让 我们的任务 GenerateR2Task 的输出，能够作为  generate[Variant]Sources 的输入。这样通过输入输出关系，就可以很好地把 GenerateR2Task
                      *  放到 build 构建过程中去
                      */
-                    variant.registerJavaGeneratingTask(task, task.outputDir)
+                    variant.registerJavaGeneratingTask(task, outputFile)
                 }
             }
         }

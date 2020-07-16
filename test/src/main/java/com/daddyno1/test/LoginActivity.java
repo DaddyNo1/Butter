@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.widget.TextView;
 
 import com.daddyno1.butter_annotation.BindView;
+import com.daddyno1.butterapi.Butter;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -16,5 +17,9 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        Butter.bind(this);
+
+        testTv.setText(":test - LoginActivity");
     }
 }
