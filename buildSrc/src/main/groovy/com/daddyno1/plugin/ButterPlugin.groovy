@@ -54,6 +54,12 @@ class ButterPlugin implements Plugin<Project>{
             def outputDir = project.getBuildDir().path + "/generated/source/r2/${variant.dirName}"
             def outputFile = new File(outputDir);
 
+            /**
+             *  删除上次生成的文件。否则报错。 Cannot write to file '/Users/jxf/workspace/Android/githubProject/Butter/test/build/generated/source/r2/debug' specified for property '$1' as it is a directory.
+             *  可能是 Task 要求 output 不能有东西吧。
+             */
+            outputFile.deleteDir()
+
             def pkg = getPackage(variant);
             def once = new AtomicBoolean()
 

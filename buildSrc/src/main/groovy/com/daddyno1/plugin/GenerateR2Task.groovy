@@ -27,7 +27,8 @@ class GenerateR2Task extends DefaultTask{
     def setInputAndOutput(){
         this.inputs.files(rFile)
         /**
-         * 现在又有一个问题：为什么clean完项目后，只有第一次可以build通过，下一次执行build 的时候回报错？
+         * 现在又有一个问题：为什么clean完项目后，只有第一次可以build通过，下一次执行build 的时候回报错？暂不清楚，只要每次构建的时候吧先把 outputFile 下的文件清理一下就可以了，
+         * 这样能够像 clean 以后一样。
          *
          *    报错信息：
          *    A problem was found with the configuration of task ':test:GenerateDebugR2'.
