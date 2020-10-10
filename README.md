@@ -7,8 +7,6 @@ Attention: This tool is now deprecated. Please switch to view binding. Existing 
 上边来自 ButterKnife github 主页。虽然一代神库要落下帷幕了，但是它带给了我们很多。通过学习它可以get
 到很多技能，这些很重要。
 
-以上提到了 ViewBinding 之前懵懂的时候听过，也好想使用过，就是当时稀里糊涂，接下来有时间搞一下。
-
 
 ###### 这里有一个问题：把项目clean以后，所有使用到R2的地方都会爆红，IDE会提示异常。为何编译的时候不收影响呢？
 具体原因见（asset/pic3.png）
